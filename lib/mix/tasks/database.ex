@@ -5,11 +5,9 @@ defmodule Mix.Tasks.Database do
   def run(_) do
     :net_kernel.start([:danilla@master, :shortnames])
 
-    if File.exists?("#{File.cwd!}/Mnesia.danilla@master") do
-      :mnesia.start()
-    end
-
     :mnesia.create_schema([node()])
+
+    :mnesia.start()
 
     IO.puts("Creating tables ...")
 
