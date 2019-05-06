@@ -5,7 +5,9 @@ defmodule Mix.Tasks.Database do
   def run(_) do
     :net_kernel.start([:danilla@master, :shortnames])
 
-    :mnesia.start()
+    if File.exists?("#{File.cwd!}/Mnesia.danilla@master") do
+      :mnesia.start()
+    end
 
     :mnesia.create_schema([node()])
 
@@ -45,7 +47,7 @@ defmodule Mix.Tasks.Database do
         IO.puts("Unknown Error !")
     end
 
-    :mnesia.wait_for_tables([Users, Secrets], 5000)
+    :mnesia.wait_for_tables([Users], 5000)
 
     check_record = fn ->
       :mnesia.read({Users, "admin"})
@@ -70,7 +72,7 @@ defmodule Mix.Tasks.Database do
         IO.puts("Unknown Error !")
     end
 
-    :mnesia.stop()
+    # :mnesia.stop()
   end
 
   def random_string(length) do
