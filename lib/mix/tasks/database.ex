@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Database do
 
     case :mnesia.create_table(Users,
            attributes: [:username, :password, :tfa_key, :tfa_used],
-           disc_copies: [node()]
+           disc_only_copies: [node()]
          ) do
       {:atomic, :ok} ->
         IO.puts("Users table created successfully !")
@@ -21,8 +21,8 @@ defmodule Mix.Tasks.Database do
       {:aborted, {:already_exists, Users}} ->
         IO.puts("Users table already exist !")
 
-      {:aborted, {:bad_type, Users, :disc_copies, :danilla@master}} ->
-        IO.puts("Error, disc_copies failed")
+      {:aborted, {:bad_type, Users, :disc_only_copies, :danilla@master}} ->
+        IO.puts("Error, disc_only_copies failed")
 
       _ ->
         IO.puts("Unknown Error !")
@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Database do
 
     case :mnesia.create_table(Secrets,
            attributes: [:id, :type, :value],
-           disc_copies: [node()]
+           disc_only_copies: [node()]
          ) do
       {:atomic, :ok} ->
         IO.puts("Secrets table created successfully !")
@@ -38,8 +38,8 @@ defmodule Mix.Tasks.Database do
       {:aborted, {:already_exists, Secrets}} ->
         IO.puts("Secrets table already exist !")
 
-      {:aborted, {:bad_type, Secrets, :disc_copies, :danilla@master}} ->
-        IO.puts("Error, disc_copies failed")
+      {:aborted, {:bad_type, Secrets, :disc_only_copies, :danilla@master}} ->
+        IO.puts("Error, disc_only_copies failed")
 
       _ ->
         IO.puts("Unknown Error !")
@@ -67,10 +67,12 @@ defmodule Mix.Tasks.Database do
         end
 
       _ ->
-        IO.puts("Unknown Error !")
+        IO.puts("Already exist !")
     end
 
-    # :mnesia.stop()
+    :timer.sleep(510)
+
+    :mnesia.stop()
   end
 
   def random_string(length) do
