@@ -16,12 +16,29 @@ defmodule Mix.Tasks.Database do
            disc_copies: [node()]
          ) do
       {:atomic, :ok} ->
-        IO.puts("Table created successfully !")
+        IO.puts("Users table created successfully !")
 
       {:aborted, {:already_exists, Users}} ->
-        IO.puts("Table already exist !")
+        IO.puts("Users table already exist !")
 
       {:aborted, {:bad_type, Users, :disc_copies, :danilla@master}} ->
+        IO.puts("Error, disc_copies failed")
+
+      _ ->
+        IO.puts("Unknown Error !")
+    end
+
+    case :mnesia.create_table(Secrets,
+           attributes: [:id, :type, :value],
+           disc_copies: [node()]
+         ) do
+      {:atomic, :ok} ->
+        IO.puts("Secrets table created successfully !")
+
+      {:aborted, {:already_exists, Secrets}} ->
+        IO.puts("Secrets table already exist !")
+
+      {:aborted, {:bad_type, Secrets, :disc_copies, :danilla@master}} ->
         IO.puts("Error, disc_copies failed")
 
       _ ->
