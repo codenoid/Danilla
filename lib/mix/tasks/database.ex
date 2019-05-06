@@ -12,7 +12,7 @@ defmodule Mix.Tasks.Database do
     IO.puts("Creating tables ...")
 
     case :mnesia.create_table(Users,
-           attributes: [:username, :password, :tfa_key],
+           attributes: [:username, :password, :tfa_key, :tfa_used],
            disc_copies: [node()]
          ) do
       {:atomic, :ok} ->
@@ -45,6 +45,35 @@ defmodule Mix.Tasks.Database do
         IO.puts("Unknown Error !")
     end
 
+    :mnesia.wait_for_tables([Users, Secrets], 5000)
+
+    check_record = fn ->
+      :mnesia.read({Users, "admin"})
+    end
+
+    case {type, result} = :mnesia.transaction(check_record) do
+      {:atomic, []} ->
+        tfa_secret = random_string(12)
+
+        case :mnesia.dirty_write(
+               {Users, "admin", "$2b$06$YChCKP6dY3R1zysxIRC8peB2rxqTT0b15r.K1PxLyCGVjdu6AuGku",
+                tfa_secret, false}
+             ) do
+          :ok ->
+            IO.puts("Default user has been created !")
+
+          _ ->
+            IO.puts("Unknown Error !")
+        end
+
+      _ ->
+        IO.puts("Unknown Error !")
+    end
+
     :mnesia.stop()
+  end
+
+  def random_string(length) do
+    :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end
 end
