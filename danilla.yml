@@ -1,0 +1,6 @@
+site_name: Danilla
+
+auth:
+  web:
+    username: admin
+    password: admin123

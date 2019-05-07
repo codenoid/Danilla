@@ -1,8 +1,12 @@
-defmodule Mix.Tasks.Database do
-  use Mix.Task
+defmodule Danilla.Application do
+  # See https://hexdocs.pm/elixir/Application.html
+  # for more information on OTP Applications
+  @moduledoc false
 
-  @shortdoc "Init Database"
-  def run(_) do
+  use Application
+
+  def start(_type, _args) do
+    # set node name to danilla@master
     :net_kernel.start([:danilla@master, :shortnames])
 
     :mnesia.create_schema([node()])
@@ -53,7 +57,7 @@ defmodule Mix.Tasks.Database do
 
     case {type, result} = :mnesia.transaction(check_record) do
       {:atomic, []} ->
-        tfa_secret = random_string(16)
+        tfa_secret = Elixir2fa.random_secret(16)
 
         case :mnesia.dirty_write(
                {Users, "admin", "$2b$06$YChCKP6dY3R1zysxIRC8peB2rxqTT0b15r.K1PxLyCGVjdu6AuGku",
@@ -72,10 +76,29 @@ defmodule Mix.Tasks.Database do
 
     :timer.sleep(510)
 
-    :mnesia.stop()
+    # :mnesia.stop()
+
+    # List all child processes to be supervised
+    children = [
+      # Start the endpoint when the application starts
+      DanillaWeb.Endpoint
+      # Starts a worker by calling: Danilla.Worker.start_link(arg)
+      # {Danilla.Worker, arg},
+    ]
+
+    # create table for web session
+    :ets.new(:danilla_session, [:set, :public, :named_table])
+
+    # See https://hexdocs.pm/elixir/Supervisor.html
+    # for other strategies and supported options
+    opts = [strategy: :one_for_one, name: Danilla.Supervisor]
+    Supervisor.start_link(children, opts)
   end
 
-  def random_string(length) do
-    :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
+  # Tell Phoenix to update the endpoint configuration
+  # whenever the application is updated.
+  def config_change(changed, _new, removed) do
+    DanillaWeb.Endpoint.config_change(changed, removed)
+    :ok
   end
 end
