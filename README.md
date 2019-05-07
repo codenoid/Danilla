@@ -4,6 +4,8 @@ Secret Management written in Elixir based on Mnesia & ETS
 
 > **Not Public-Production Ready (yet) !**
 
+This application primarily used for distributing Secret (not to secure it | yet)
+
 ## Usage
 
 1. Install Elixir ([Official Tutorial](https://elixir-lang.org/install.html))
