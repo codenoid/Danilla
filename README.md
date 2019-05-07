@@ -2,9 +2,7 @@
 
 Secret Management written in Elixir based on Mnesia & ETS
 
-<aside class="warning">
-	Not Public-Production Ready (yet) !
-</aside>
+> **Not Public-Production Ready (yet) !**
 
 ## Usage
 
