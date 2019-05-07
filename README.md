@@ -19,6 +19,16 @@ Username : admin
 Password : admin123
 ```
 
+### API Usage
+
+`http://localhost:4000/api/single?key=secret-key`
+
+## Screenshot
+
+![alt text](https://raw.githubusercontent.com/codenoid/Danilla/master/screenshot/ss1.png)
+
+![alt text](https://raw.githubusercontent.com/codenoid/Danilla/master/screenshot/ss2.png)
+
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
 ## Learn more about phoenix
